@@ -1,7 +1,7 @@
 # JPA-Style-Repository
 Implementing Repository interface is a tedious job. When I saw JpaRepository in Java side, I wondered if there's a similar implmentation of `JpaRepository` in .NET side. But, I couldn't find anything.
 
-This repository library will be your life savior for the recurring repository implementation job.
+This repository library will free you from the recurring repository implementation job.
 
 # How To Use
 **1. Define a interface inheriting ICrudRepository with Repository attribute**
