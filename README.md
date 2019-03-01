@@ -15,7 +15,7 @@ public interface IOrderRepository : ICrudRepository<Order, Guid>
 
 **2. Set database connection string**
 
-If you are using OWIN project, you can put this configuration in `Startup.cs` file.
+If you are using OWIN project, you can put this configuration in `Startup.cs` or `Global.asax` file.
 ```
 UnitOfWork.UseSqlServer("{DB name or connection string}");
 ```
