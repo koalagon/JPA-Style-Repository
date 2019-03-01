@@ -29,16 +29,16 @@ namespace NPA.Console
             });
 
             var result1 = orderRepository.FindAll(x => x.Product == "Product").ToList();
-            System.Console.WriteLine("*** Printing FindAll Result ***");
+            System.Console.WriteLine(@"*** Printing FindAll Result ***");
             foreach (var result in result1)
             {
-                System.Console.WriteLine(@$"ID: {result.Id}, Product: {result.Product}, Address: {result.Address}");
+                System.Console.WriteLine($@"ID: {result.Id}, Product: {result.Product}, Address: {result.Address}");
             }
-            System.Console.WriteLine("*** Printing GetAll Result ***");
+            System.Console.WriteLine(@"*** Printing GetAll Result ***");
             var result2 = orderRepository.GetAll().ToList();
             foreach (var result in result2)
             {
-                System.Console.WriteLine(@$"ID: {result.Id}, Product: {result.Product}, Address: {result.Address}");
+                System.Console.WriteLine($@"ID: {result.Id}, Product: {result.Product}, Address: {result.Address}");
             }
 
             unitOfWork.SaveChanges();
