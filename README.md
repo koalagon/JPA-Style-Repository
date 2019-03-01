@@ -29,3 +29,5 @@ orderRepository.Add(new Order
 
 unitOfWork.SaveChanges();
 ```
+
+Please see the NPA.Console project for the demo.
