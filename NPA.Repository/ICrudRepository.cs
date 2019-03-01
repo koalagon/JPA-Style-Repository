@@ -12,14 +12,16 @@ namespace NPA.Repository
 
         void Delete(TEntity entity);
 
-        bool Exist(TKey key);
+        bool Any(Expression<Func<TEntity, bool>> predicate);
 
-        bool Exist(Expression<Func<TEntity, bool>> predicate);
+        int Count();
 
         int Count(Expression<Func<TEntity, bool>> predicate);
 
         IEnumerable<TEntity> GetAll();
 
-        IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate);
+        IEnumerable<TEntity> FindAll(Expression<Func<TEntity, bool>> predicate);
+
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
     }
 }

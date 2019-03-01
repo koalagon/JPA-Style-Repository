@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IOrderRepository.cs" />
-    <Compile Include="ITestRepository.cs" />
     <Compile Include="Migrations\201903010404045_model1.cs" />
     <Compile Include="Migrations\201903010404045_model1.Designer.cs">
       <DependentUpon>201903010404045_model1.cs</DependentUpon>

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPA.Repository
 {
@@ -32,30 +29,34 @@ namespace NPA.Repository
             _dbContext.Set<TEntity>().Remove(entity);
         }
 
-        public bool Exist(TKey key)
+        public bool Any(Expression<Func<TEntity, bool>> predicate)
         {
-            return true;
+            return _dbContext.Set<TEntity>().Any(predicate);
         }
 
-        public bool Exist(Expression<Func<TEntity, bool>> predicate)
+        public int Count()
         {
-            throw new NotImplementedException();
+            return _dbContext.Set<TEntity>().Count();
         }
 
         public int Count(Expression<Func<TEntity, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return _dbContext.Set<TEntity>().Count(predicate);
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            var resultSet = _dbContext.Set<TEntity>().ToList();
             return _dbContext.Set<TEntity>().ToList();
         }
 
-        public IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
+        public IEnumerable<TEntity> FindAll(Expression<Func<TEntity, bool>> predicate)
         {
             return _dbContext.Set<TEntity>().Where(predicate).ToList();
+        }
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbContext.Set<TEntity>().FirstOrDefault(predicate);
         }
     }
 }
