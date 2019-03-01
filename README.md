@@ -34,4 +34,29 @@ orderRepository.Add(new Order
 unitOfWork.SaveChanges();
 ```
 
+If you are using DI framework, you can inject `IUnitOfWork`.
+```
+// Autofac
+builder.RegisterInstance(new UnitOfWork())
+       .As<IUnitOfWork>();
+       
+
+// .NET MVC controller
+public class HomeController : Controller
+{
+    private readonly IUnitOfWork _unitOfWork;
+    
+    public HomeController(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
+    }
+    
+    public ActionResult Index()
+    {
+        var orderRepository = _unitOfWork.GetRepository<IOrderRepository>();
+        // Do your work
+    }
+}
+```
+
 Please see the NPA.Console project for the demo.
