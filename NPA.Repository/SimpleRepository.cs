@@ -19,6 +19,11 @@ namespace NPA.Repository
             _dbContext.Set<TEntity>().Add(entity);
         }
 
+        public void AddRange(IEnumerable<TEntity> entities)
+        {
+            _dbContext.Set<TEntity>().AddRange(entities);
+        }
+
         public TEntity GetById(TKey key)
         {
             return _dbContext.Set<TEntity>().Find(key);
@@ -32,6 +37,11 @@ namespace NPA.Repository
         public bool Any(Expression<Func<TEntity, bool>> predicate)
         {
             return _dbContext.Set<TEntity>().Any(predicate);
+        }
+
+        public bool All(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbContext.Set<TEntity>().All(predicate);
         }
 
         public int Count()
@@ -57,6 +67,11 @@ namespace NPA.Repository
         public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
             return _dbContext.Set<TEntity>().FirstOrDefault(predicate);
+        }
+
+        public TEntity LastOrDefault(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbContext.Set<TEntity>().LastOrDefault(predicate);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
@@ -9,12 +10,30 @@ namespace NPA.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private static string _nameOrConnectionString;
-        private readonly Hashtable _repositories = new Hashtable();
+        private static Hashtable _repositories;
+        private static List<Type> _entities;
+        private static List<Type> _attributes;
         private readonly SimpleDbContext _dbContext;
+        private readonly ProxyGenerator _proxyGenerator = new ProxyGenerator();
 
         public static void UseSqlServer(string nameOrConnectionString)
         {
             _nameOrConnectionString = nameOrConnectionString;
+            ScanAssembly();
+        }
+
+        private static void ScanAssembly()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            // Get Type having RepositoryAttribute
+            _attributes = assemblies.SelectMany(a => a.GetTypes())
+                .Where(t => t.IsDefined(typeof(RepositoryAttribute), false)).ToList();
+
+            // Get the generic type arguments for ICrudRepository
+            _entities = _attributes.Select(t => t.GetTypeInfo().ImplementedInterfaces
+                .FirstOrDefault(s => s.IsInterface && s.GetGenericTypeDefinition() == typeof(ICrudRepository<,>))?
+                .GenericTypeArguments).Where(s => s.First() != null).Select(s => s.First()).ToList();
         }
 
         public UnitOfWork()
@@ -24,36 +43,15 @@ namespace NPA.Repository
                 throw new InvalidOperationException("Database name or connection string is null.");
             }
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            _dbContext = new SimpleDbContext(_nameOrConnectionString, _entities);
+            _repositories = new Hashtable();
 
-            // Get Type having RepositoryAttribute
-            var types = assemblies.SelectMany(a => a.GetTypes())
-                .Where(t => t.IsDefined(typeof(RepositoryAttribute), false)).ToList();
-
-            // Get the generic type arguments for ICrudRepository
-            var genericTypeArgs = types.Select(t => t.GetTypeInfo().ImplementedInterfaces
-                .FirstOrDefault(s => s.IsInterface && s.GetGenericTypeDefinition() == typeof(ICrudRepository<,>))?
-                .GenericTypeArguments).ToList();
-
-            var entities = genericTypeArgs.Where(s => s.FirstOrDefault() != null).Select(s => s.First()).ToList();
-
-            _dbContext = new SimpleDbContext(_nameOrConnectionString, entities);
-
-            var proxyGenerator = new ProxyGenerator();
-
-            foreach (var type in types)
+            foreach (var attribute in _attributes)
             {
-                // Interface doesn't inherit ICrudRepository. Skip the Type
-                if (!type.GetTypeInfo().ImplementedInterfaces.Any(s => s.IsInterface && s.GetGenericTypeDefinition() == typeof(ICrudRepository<,>)))
+                if (!_repositories.ContainsKey(attribute))
                 {
-                    continue;
-                }
-
-                var proxy = proxyGenerator.CreateInterfaceProxyWithoutTarget(type, new RepositoryInterceptor(_dbContext));
-
-                if (!_repositories.ContainsKey(type))
-                {
-                    _repositories.Add(type, proxy);
+                    var proxy = _proxyGenerator.CreateInterfaceProxyWithoutTarget(attribute, new RepositoryInterceptor(_dbContext));
+                    _repositories.Add(attribute, proxy);
                 }
             }
         }
@@ -73,11 +71,6 @@ namespace NPA.Repository
         public void SaveChanges()
         {
             _dbContext.SaveChanges();
-        }
-
-        public async void SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
         }
 
         public void Dispose()

@@ -8,11 +8,15 @@ namespace NPA.Repository
     {
         void Add(TEntity entity);
 
+        void AddRange(IEnumerable<TEntity> entities);
+
         TEntity GetById(TKey key);
 
         void Delete(TEntity entity);
 
         bool Any(Expression<Func<TEntity, bool>> predicate);
+
+        bool All(Expression<Func<TEntity, bool>> predicate);
 
         int Count();
 
@@ -23,5 +27,7 @@ namespace NPA.Repository
         IEnumerable<TEntity> FindAll(Expression<Func<TEntity, bool>> predicate);
 
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
+
+        TEntity LastOrDefault(Expression<Func<TEntity, bool>> predicate);
     }
 }
